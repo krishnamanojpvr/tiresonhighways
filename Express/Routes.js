@@ -20,9 +20,9 @@ const axios = require('axios');
 const TollData = require('./models/TollDataSch');
 const app = express();
 const blobUtil = require('blob-util');
-const { hostname } = require('os');
-const twilio = require('twilio');
-const dotenv = require('dotenv').config();
+// const { hostname } = require('os');
+// const twilio = require('twilio');
+// const dotenv = require('dotenv').config();
 
 //~ console.log(window.location.pathname);
 //~ console.log(window.location.origin);
@@ -76,6 +76,10 @@ mongoose.connect("mongodb://localhost:27017/myFirst")
 // ^ Express config for parsing request body as JSON and serving static files
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get('/', (req, res) => {
+  res.send("Hello TiresOnHighways User!!!");
+});
 
 //! TollUpload Route
 app.post('/tollupload', Tollupload.single("TolluploadImage"), async (req, res) => {
