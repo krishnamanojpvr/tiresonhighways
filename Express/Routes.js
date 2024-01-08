@@ -45,6 +45,9 @@ const TollUp = multer.diskStorage({
     cb(null, file.fieldname + '.jpg');
   }
 });
+
+// const TollUp = multer.memoryStorage()
+
 const Tollupload = multer({ storage: TollUp, limits: { fieldSize: 25 * 1024 * 1024 } })
 
 // & Multer config for GuestUpload
@@ -95,9 +98,8 @@ app.post('/tollupload', Tollupload.single("TolluploadImage"), async (req, res) =
   try {
     console.log("Sending file to flask api. . . ");
     const tollResponse_flask = await axios.post(`http://127.0.0.1:${flask_port}/classify`, tollFlaskRequestData)
-    classification_result = tollResponse_flask.data;
-    console.log("Classification Result : ", classification_result);
-    tollFlaskResponse = classification_result;
+    tollFlaskResponse= tollResponse_flask.data;
+    console.log("Classification Result : ", tollFlaskResponse);
 
     // * checking if flask api returned error
     if (tollFlaskResponse["error"]) {
@@ -150,15 +152,15 @@ app.post('/tollupload', Tollupload.single("TolluploadImage"), async (req, res) =
 
 // ! GuestUpload Route
 app.post('/guestUp', Guestupload.any(), async (req, res) => {
-  host = req.hostname;
+  // host = req.hostname;
 
   // originalUrl = req.originalUrl;
   // console.log(req.hostname);
-  // console.log(req.originalUrl);
-  // console.log(req.protocol + '://' + req.get('host') + req.originalUrl);
+  // console.log(req.originalUrl);ri
+  // console.log(req.protocol + '://' + req.get('host') + req.oginalUrl);
 
   console.log("GuestUpload Route");
-  // * reading image file from uploads folder in buffer and converting to blob
+  // * reading image file from Guestuploads folder in buffer and converting to blob
 
   const guestBlobArray = [];
 
