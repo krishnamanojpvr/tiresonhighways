@@ -77,7 +77,7 @@ mongoose.connect("mongodb://localhost:27017/myFirst")
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.get('/', (req, res) => {
+app.get('/health', (req, res) => {
   res.send("Hello TiresOnHighways User!!!");
 });
 
