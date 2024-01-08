@@ -22,7 +22,7 @@ const app = express();
 const blobUtil = require('blob-util');
 // const { hostname } = require('os');
 // const twilio = require('twilio');
-// const dotenv = require('dotenv').config();
+const dotenv = require('dotenv').config();
 
 //~ console.log(window.location.pathname);
 //~ console.log(window.location.origin);
@@ -37,29 +37,37 @@ const port = 4000;
 app.use(cors());
 
 // & Multer config for TollUpload
-const TollUp = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'TollUploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '.jpg');
-  }
-});
+// const TollUp = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'TollUploads/');
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.fieldname + '.jpg');
+//   }
+// });
 
-// const TollUp = multer.memoryStorage()
+const TollUp = multer.memoryStorage(); // Updated
+const Tollupload = multer({ storage: TollUp, limits: { fieldSize: 25 * 1024 * 1024 } });
 
-const Tollupload = multer({ storage: TollUp, limits: { fieldSize: 25 * 1024 * 1024 } })
 
 // & Multer config for GuestUpload
-const GuestUp = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'GuestUploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '.jpg');
-  }
-});
+// const GuestUp = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'GuestUploads/');
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.fieldname + '.jpg');
+//   }
+// });
+const GuestUp = multer.memoryStorage();  // Updated
 const Guestupload = multer({ storage: GuestUp })
+
+// & Google Cloud Storage connection
+const storage = new Storage({
+  projectId: 'deployflask-409215', // Updated
+  keyFilename: '../Flask/deployflask-409215-ebd0880e3066.json', // Updated
+});
+const bucket = storage.bucket('tiresonhighways'); // Updated
 
 // & MongoDB connection
 
