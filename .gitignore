@@ -23,4 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 Server.env
 best_model.h5
+express/node_modules
 ```
