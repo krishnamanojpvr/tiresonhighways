@@ -25,7 +25,7 @@ export default function GuestDetails() {
 
         console.log("Input : VehicleNo : ", vno);
 
-        const response = await axios.get('http://localhost:4000/guestDet', {
+        const response = await axios.get('https://tohexpress.verce.app/guestDet', {
             params: {
                 vehicleNumber: vno,
             },
