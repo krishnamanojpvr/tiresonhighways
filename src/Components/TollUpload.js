@@ -64,7 +64,7 @@ export default function TollUpload() {
       // console.log(requestData.get('tireImage'));
 
       try {
-        const response_express = await axios.post('http://localhost:4000/tollupload', requestData, {  
+        const response_express = await axios.post('https://tohexpress.vercel.app/tollupload', requestData, {  
           headers: {
             'Content-Type': 'multipart/form-data',
           },

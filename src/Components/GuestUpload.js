@@ -4,11 +4,6 @@ import axios from "axios";
 import Loader from './Loader.js';
 
 export default function GuestUpload() {
-    // console.log(window.location.pathname);
-    // console.log(window.location.origin);
-    // console.log(window.location.href);
-    // console.log(window.location.host);
-    // console.log(window.location.hostname);
     const [im, setIm] = useState([]);
     const [classificationResult, setClassificationResult] = useState([]);
     const [base64String, setBase64String] = useState([]); // Base64String
@@ -70,7 +65,7 @@ export default function GuestUpload() {
             async function makeReq(formData) {
                 try {
                     console.log("Making request");
-                    const response = await axios.post(`http://${window.location.hostname}:4000/guestUp`, formData)
+                    const response = await axios.post(`https://tohexpress.vercel.app/guestUp`, formData)
                     console.log(response.data);
                     setLoader(false);
                     setRes(true);
