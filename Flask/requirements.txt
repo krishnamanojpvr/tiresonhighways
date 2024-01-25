@@ -1,0 +1,8 @@
+Flask==2.3.2
+requests==2.28.2
+gunicorn==20.1.0
+tensorflow==2.15.0
+numpy==1.26.1
+keras-preprocessing==1.1.2
+Flask-Cors==4.0.0
+pillow==10.0.0
