@@ -33,7 +33,7 @@ const storage = new Storage({
 const bucket = storage.bucket('tiresonhighways');
 
 // & MongoDB connection
-mongoose.connect("mongodb://localhost:27017/myFirst")
+mongoose.connect("mongodb+srv://g81projectschool:g81mongodbatlas@g81.vfvqgii.mongodb.net/")
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
@@ -46,28 +46,29 @@ app.get('/', (req, res) => {
 });
 
 //! TollUpload Route
-app.post('/tollupload', Tollupload.single("TolluploadImage"), async (req, res) => {
-
+app.post('/tollupload', Tollupload.any(), async (req, res) => {
+  console.log("TollUpload Route");
   const { vehicleNumber, userMobileNumber, userTyre64 } = req.body;
-
+  const tollBlobArray = [];
   const files = req.files;
-  const tollImageBuffer = files[0].buffer;
-  const tollBlob = blobUtil.createBlob([tollImageBuffer], { type: 'image/jpeg' });
-
+  for (let i = 0; i < files.length; i++) {
+    const tollImageBuffer = files[i].buffer;
+    const tollBlob = blobUtil.createBlob([tollImageBuffer], { type: 'image/jpeg/jpg/png' });
+    tollBlobArray.push(tollBlob);
+  }
   const tollFlaskRequestData = new FormData();
-  tollFlaskRequestData.append('image', tollBlob, 'TolluploadImage.jpg');
-  let tollFlaskResponse = null;
-
+  tollBlobArray.forEach((tollBlob) => {
+    tollFlaskRequestData.append('image', tollBlob, 'TolluploadImage.jpg');
+  });
+  const tollFlaskResponse = [];
   try {
-    console.log("Sending file to flask api. . . ");
     const tollResponse_flask = await axios.post(`https://finalflask.el.r.appspot.com/classify`, tollFlaskRequestData)
-    tollFlaskResponse = tollResponse_flask.data;
-
-
+    for (let i = 0; i < files.length; i++) {
+      tollFlaskResponse.push(tollResponse_flask.data[i]);
+    }
     if (tollFlaskResponse["error"]) {
       return res.status(500).send('Bad response from flask api');
     }
-
     try {
       const tollData = new TollData({
         vehicleNumber: vehicleNumber,
@@ -75,15 +76,12 @@ app.post('/tollupload', Tollupload.single("TolluploadImage"), async (req, res) =
         userTyre64: userTyre64,
         tyreStatus: tollFlaskResponse
       });
-
       await tollData.save();
-      res.send(`Data saved to MongoDB: ${JSON.stringify(tollData, null, 2)}`);
-
+      // res.send(`Data saved to MongoDB: ${JSON.stringify(tollData, null, 2)}`);
+      res.send(`Data saved to MongoDB`);
     } catch (err) {
       res.status(500).send('Error saving data to MongoDB');
     }
-
-
   } catch (error) {
     return res.status(500).send('Error sending file to flask_api');
   }
@@ -128,7 +126,7 @@ app.post('/guestUp', Guestupload.any(), async (req, res) => {
       return res.status(500).send('Error sending file to flask_api');
     }
   } catch (err) {
-    return res.status(500).send('Error reading folder');
+    return res.status(500).send('Error reading files');
   }
 });
 

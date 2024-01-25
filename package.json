@@ -2,6 +2,7 @@
   "name": "tiresonhighways",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -26,10 +27,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "app": "electron .",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "appbuilder": "electron-builder -c.extraMetadata.main=build/electron.js"
   },
   "eslintConfig": {
     "extends": [
@@ -48,5 +51,37 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^28.1.2",
+    "electron-builder": "^24.9.1",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "your.app.id",
+    "productName": "TiresOnHighways",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "public/**/*",
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./public/toh.ico",
+      "uninstallerIcon": "./public/toh.ico",
+      "installerHeaderIcon": "./public/toh.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

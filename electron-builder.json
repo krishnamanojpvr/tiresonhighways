@@ -1,0 +1,23 @@
+{
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "asar": false 
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "D:/Project school 2-1/frontend_new_11_11_23/frontend_new_11_11_23/public/favicon.ico",
+      "uninstallerIcon": "D:/Project school 2-1/frontend_new_11_11_23/frontend_new_11_11_23/public/favicon.ico",
+      "installerHeaderIcon": "D:/Project school 2-1/frontend_new_11_11_23/frontend_new_11_11_23/public/favicon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "electronFiles":[
+      "main.js"
+    ]
+  }
+  
