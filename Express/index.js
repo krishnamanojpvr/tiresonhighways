@@ -62,7 +62,7 @@ app.post('/tollupload', Tollupload.any(), async (req, res) => {
   });
   const tollFlaskResponse = [];
   try {
-    const tollResponse_flask = await axios.post(`https://tohflask/classify`, tollFlaskRequestData)
+    const tollResponse_flask = await axios.post(`https://tohflask.onrender.com/classify`, tollFlaskRequestData)
     for (let i = 0; i < files.length; i++) {
       tollFlaskResponse.push(tollResponse_flask.data[i]);
     }
@@ -110,7 +110,7 @@ app.post('/guestUp', Guestupload.any(), async (req, res) => {
 
 
     try {
-      const guestResponse_flask = await axios.post("https://finalflask.el.r.appspot.com/classify", guestFlaskRequestData);
+      const guestResponse_flask = await axios.post("https://tohflask.onrender.com/classify", guestFlaskRequestData);
       for (let i = 0; i < files.length; i++) {
         guestFlaskResponse.push(guestResponse_flask.data[i]);
       }

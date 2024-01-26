@@ -44,9 +44,9 @@ def classify_image():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}),500
 
-@app.route('/health', methods=['GET'])
+@app.route('/', methods=['GET'])
 def health_check():
-    return jsonify({"status": "healthy"})
+    return "Hello TiresOnHighways Flask User!!!"
 
 if __name__ == '__main__':
     app.run(debug=True)
