@@ -25,12 +25,12 @@ const Tollupload = multer({ storage: TollUp, limits: { fieldSize: 25 * 1024 * 10
 const GuestUp = multer.memoryStorage();
 const Guestupload = multer({ storage: GuestUp })
 
-// & Google Cloud Storage connection
-const storage = new Storage({
-  projectId: 'deployflask-409215',
-  keyFilename: './deployflask-409215-ebd0880e3066.json',
-});
-const bucket = storage.bucket('tiresonhighways');
+// // & Google Cloud Storage connection
+// const storage = new Storage({
+//   projectId: 'deployflask-409215',
+//   keyFilename: './deployflask-409215-ebd0880e3066.json',
+// });
+// const bucket = storage.bucket('tiresonhighways');
 
 // & MongoDB connection
 mongoose.connect("mongodb+srv://g81projectschool:g81mongodbatlas@g81.vfvqgii.mongodb.net/")
@@ -62,7 +62,7 @@ app.post('/tollupload', Tollupload.any(), async (req, res) => {
   });
   const tollFlaskResponse = [];
   try {
-    const tollResponse_flask = await axios.post(`https://finalflask.el.r.appspot.com/classify`, tollFlaskRequestData)
+    const tollResponse_flask = await axios.post(`https://tohflask/classify`, tollFlaskRequestData)
     for (let i = 0; i < files.length; i++) {
       tollFlaskResponse.push(tollResponse_flask.data[i]);
     }
