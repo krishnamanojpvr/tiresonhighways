@@ -30,6 +30,9 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use(express.urlencoded({ extended: true }));  
 app.use(router);
 
+router.get('/', (req, res) => {
+  res.send('Hello TiresOnHighways Express ;)');
+});
 router.get('/guestDet' ,guestDetails);
 router.post('/guestUp', guestUpload);
 router.get('/checkRecords', tollCheckRecords);
