@@ -28,7 +28,7 @@ export default function CheckRecords(props) {
     e.preventDefault();
     console.log(props.selectedToll)
     try {
-      const response = await axios.get(`https://tohexpress.onrender.com/checkRecords`, {
+      const response = await axios.get(`https://tohexpress.vercel.app/checkRecords`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,
@@ -56,7 +56,7 @@ export default function CheckRecords(props) {
 
   async function getImage(vehicleNumber) {
     try {
-      const imageSrcData = await axios.get(`https:tohexpress.onrender.com/getIm`, {
+      const imageSrcData = await axios.get(`https://tohexpress.vercel.app/getIm`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,

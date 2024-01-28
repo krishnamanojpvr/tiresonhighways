@@ -28,7 +28,7 @@ export default function GuestDetails(props) {
         setNoData(false);
         setRes(false);
         e.preventDefault();
-        const response = await axios.get(`https://tohexpress.onrender.com/guestDet`, {
+        const response = await axios.get(`https://tohexpress.vercel.app/guestDet`, {
             params: {
                 vehicleNumber: vno,
             },
