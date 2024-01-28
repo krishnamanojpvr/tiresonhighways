@@ -3,19 +3,20 @@ import { useState } from "react";
 import axios from "axios";
 import Loader from './Loader.js';
 
-export default function GuestUpload() {
-    const [im, setIm] = useState([]);
+export default function GuestUpload(props) {
+    props.setSignInButton(true);
+    const [im, setIm] = useState(null);
     const [classificationResult, setClassificationResult] = useState([]);
-    const [base64String, setBase64String] = useState([]); // Base64String
-    const [loader, setLoader] = useState(false); // Loader
-    const [res, setRes] = useState(false); // Result
+    const [base64String, setBase64String] = useState([]);
+    const [loader, setLoader] = useState(false);
+    const [res, setRes] = useState(false);
 
     const handleFileChange = (e) => {
         setClassificationResult([]);
-        setBase64String([]); // Base64String
+        setBase64String([]);
         setIm([]);
-        setLoader(false); // Loader
-        setRes(false); // Result
+        setLoader(false);
+        setRes(false);
 
 
 
@@ -25,12 +26,9 @@ export default function GuestUpload() {
             setIm(s => [...s, selected]);
             function convertToBase64(selected) {
                 if (selected) {
-
-                    //! Converting image to base64String
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const base = e.target.result;
-                        // console.log(base); 
                         setBase64String(b => [...b, base]);
                     };
                     reader.readAsDataURL(selected);
@@ -48,32 +46,30 @@ export default function GuestUpload() {
 
     const handleUpload = (e) => {
         setClassificationResult([]);
-        setRes(false); // Result
-        e.preventDefault(); // Prevent the default form submission behavior     
-        setLoader(true); // Loader
+        setRes(false);
+        e.preventDefault();
+        setLoader(true);
         if (im.length > 0) {
 
             const formData = new FormData();
-            formData.append("GuestuploadImage", im);
             for (let i = 0; i < im.length; i++) {
-                console.log("Image No. ", i + 1);
-                console.log(im[i]);
-                const gui = `GuestuploadImage${i}`
+                // console.log("Image No. ", i + 1);
+                // console.log(im[i]);
+                const gui = `GuestUploadImage${i}`
                 formData.append(gui, im[i]);
             }
 
             async function makeReq(formData) {
                 try {
-                    console.log("Making request");
-                    const response = await axios.post(`https://tohexpress.vercel.app/guestUp`, formData)
+                    const response = await axios.post(`https://tohexpress.onrender.com/guestUp`, formData)
                     console.log(response.data);
                     setLoader(false);
                     setRes(true);
                     setClassificationResult(response.data);
 
                 } catch (error) {
-                    console.log("Error occured in making request to server side from GuestUpload.js", error);
-                    setLoader(null);
+                    console.log("Error occured in making request to server", error);
+                    setLoader(false);
                     setRes(false);
                 }
             }
@@ -88,54 +84,62 @@ export default function GuestUpload() {
 
     return (
 
-        <div className="parentgu">
-            <div className="GuestUpload container m-0 shadow-lg rounded-4 border border-black">
+        <div className="container d-flex justify-content-cenetr  mt-5 " style={{ maxWidth: "600px" }}>
+            <div className="GuestUpload container  rounded-4 p-3 bg-black border border-white border-3" >
                 <form onSubmit={handleUpload} id='form' >
                     <div className="row text-center mb-3">
-                        <h1>Upload Tire</h1>
+                        <h1 style={{ color: 'white' }}>Upload Tire</h1>
                     </div>
                     <div className="image row">
                         <div className="col">
-                            <input onChange={handleFileChange} type="file" multiple accept="image/*" name="tyre" className="image form-control " required />
+                            <input style={{ borderColor: 'black' }} onChange={handleFileChange} type="file" multiple accept="image/*" name="tyre" className="image form-control " required />
                         </div>
                         <div className="row">
                             <div className="col mt-2 ">
-                                <button type="submit" className="btn btn-dark imageSub" >Submit</button>
-                            </div>
-                            <div className="col mt-2">
-                                {res && <button className="btn btn-dark mb-2 ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Result</button>}
-                            </div>
-                            <div className="col-sm-4">
-                                <Link to="/guest">
-                                    <button className="btn btn-dark back mt-2 mb-2 col " >Go Back</button>
+                                <Link to="/guest"
+                                    className="btn btn-warning" >Go Back
                                 </Link>
                             </div>
+                            {res && !loader && <div className="col mt-2">
+                                <button className="btn btn-success mb-2 ms-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Result</button>
+                            </div>}
+                            <div className="col-sm-2">
+                                <button type='submit' className="btn btn-primary mt-2 mb-2 ">Submit</button>
+                            </div>
                         </div>
-                    
                         <div className="row mb-2">
                             {loader && <Loader />}
                         </div>
-
-
-
-                        <div className="offcanvas offcanvas-start" data-bs-scroll="true" tabIndex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
-                            <div className="offcanvas-header">
-                                <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">Result</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                            </div>
-                            <div className="offcanvas-body">
-                                {res && classificationResult.map((item, index) => (<div className='row text-center mb-4 mt-3'>
-                                    <p >Classification : {item.class} </p>
-                                    <p >Confidence : {item.confidence} </p>
-                                    <div id="getImg" >
-                                        <img className="enlarge" style={{ width: '200px', height: 'auto', borderRadius: '10px', transition: 'width 0.3s ease' }} // Shrink on mouse out
-
-                                            src={base64String[index]} alt="Vehicle Tire" />
+                        <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" >
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Result</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <hr/>
+                                    <div class="modal-body">
+                                        {res && classificationResult.map((item, index) => (
+                                            <div className='row text-center mb-4 mt-3'>
+                                                <p >Classification : {item.class} </p>
+                                                <p >Confidence : {item.confidence} </p>
+                                                
+                                                <div id="getImg" >
+                                                    <img className="enlarge" style={{ width: '200px', height: 'auto', borderRadius: '10px', transition: 'width 0.3s ease' }} // Shrink on mouse out
 
-                                </div>))}
+                                                        src={base64String[index]} alt="Vehicle Tire" />
+                                                </div>
 
+
+                                            </div>))}
+                                            <hr />
+                                                <br />
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

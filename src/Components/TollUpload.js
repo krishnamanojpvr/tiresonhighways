@@ -1,135 +1,149 @@
-// TollUpload.js
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Loader from './Loader.js';
 
-export default function TollUpload() {
-
-  const [img, setImg] = useState(null);
-  const [base64String, setBase64String] = useState(null);
+export default function TollUpload(props) {
+  props.setSignInButton(false);
+  const [img, setImg] = useState([]);
+  const [base64String, setBase64String] = useState([]);
   const [vehicleNumber, setVehicleNumber] = useState(null);
   const [userMobileNumber, setUserMobileNo] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState(null);
+  const [loader, setLoader] = useState(false); // Loader
+  const [uploadStatus, setUploadStatus] = useState(false); // Result
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (uploadStatus) {
+      const timeoutId = setTimeout(() => {
+        setUploadStatus(false);
+      }, 2000);
+
+      return () => clearTimeout(timeoutId); // This will clear the timeout if the component unmounts or if uploadStatus changes before the timeout completes
+    }
+  }, [uploadStatus]);
+
+  const date = new Date();
+  let m = date.getMonth() + 1;
+  let d = date.getDate();
+
+  if (m < 10) m = '0' + m;
+  if (d < 10) d = '0' + d;
+
+  const dateS = (date.getFullYear() + '-' + m + '-' + String(d));
 
   const handleVNOChange = (event) => {
+    setLoader(false);
     setUploadStatus(null);
-    setVehicleNumber(event.target.value);
+    setVehicleNumber(event.target.value.toUpperCase());
+
 
   }
 
   const handleMNOChange = (event) => {
+    setLoader(false);
     setUploadStatus(null);
     setUserMobileNo(event.target.value);
   }
 
   const handleImageChange = async (event) => {
     setUploadStatus(null);
-    const file = event.target.files[0];
-    setImg(file);
+    setBase64String([]);
+    setImg([]);
+    setLoader(false);
 
-    function convertToBase64(file) {
-      if (file) {
-
-        //! Converting image to base64String
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base = e.target.result;
-          // console.log(base); // To log the string
-          setBase64String(base);
-        };
-        reader.readAsDataURL(file);
-
-      }
-      else {
-        console.log("Error converting to base64String");
-      }
+    for (let i = 0; i < event.target.files.length; i++) {
+      const selected = event.target.files[i];
+      setImg(s => [...s, selected]);
     }
-    convertToBase64(file);
   }
-
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setUploadStatus(null);
+    setLoader(true);
+    if (img.length > 0) {
 
-    const requestData = new FormData();
-    requestData.append('vehicleNumber', vehicleNumber);
-    requestData.append('userMobileNumber', userMobileNumber);
-    requestData.append('userTyre64', base64String);
-    requestData.append('TolluploadImage', img);
-
-    async function call_express(requestData) {
-
-      // console.log(requestData.get('vehicleNumber'));
-      // console.log(requestData.get('userMobileNumber'));
-      // console.log(requestData.get('userTyre64'));
-      // console.log(requestData.get('tireImage'));
-
-      try {
-        const response_express = await axios.post('https://tohexpress.vercel.app/tollupload', requestData, {  
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        // Handle the response, if needed
-        console.log(response_express);
-        setUploadStatus("Uploaded Successfully");
-
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        setUploadStatus("Not Uploaded");
-        // console.error(error.response.data);
+      const requestData = new FormData();
+      for (let i = 0; i < img.length; i++) {
+        const tui = `TollUploadImage${i}`
+        requestData.append(tui, img[i]);
       }
-    }
 
+      requestData.append('vehicleNumber', vehicleNumber);
+      requestData.append('userMobileNumber', userMobileNumber);
+      requestData.append('date', dateS);
+      requestData.append('tollPlaza', props.selectedToll);
 
-    if (vehicleNumber && userMobileNumber && base64String && img) {
-      call_express(requestData);
-    }
-    else {
-      console.log("Error : One or more fields are empty");
-    }
+      async function call_express(requestData) {
+        try {
+          const response_express = await axios.post('https://tohexpress.onrender.com/tollupload', requestData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+          });
 
-    document.getElementById('TollUploadForm').reset();
-  };
+          console.log(response_express);
+          setLoader(false);
+          setUploadStatus("Uploaded Successfully");
+          document.getElementById('TollUploadForm').reset();
+
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          setLoader(false);
+          setUploadStatus("Not Uploaded");
+          console.error(error.response.data);
+          if (error.response.data === "Session Expired, Please Login Again") {
+            alert("Session Expired, Please Login Again");
+            navigate('/toll');
+          }
+        }
+      }
+
+      if (vehicleNumber && userMobileNumber && base64String && img) {
+        call_express(requestData);
+      }
+      else {
+        console.log("Error : One or more fields are empty");
+      }
+    };
+  }
 
   return (
-    <div className="parenttu">
-      <div className='TollUpload container m-0'>
-        <form onSubmit={handleSubmit} encType='multipart/form-data' id='TollUploadForm'>
+    <div className=" mt-3  d-flex justify-content-center">
+      <div className='TollUpload container' style={{ maxWidth: '600px' }}>
+        <form onSubmit={handleSubmit} style={{ maxWidth: '500px', width: '100%'}} className='border border-white border-3 bg-black rounded-4 mt-5 p-4' encType='multipart/form-data' id='TollUploadForm' >
           <div id="TollUploadText">
-            <h1>Upload the data</h1>
+            <h1 style={{color:'white'}}>Upload the data</h1>
           </div>
-          <div className="col-sm-6">
-            <label htmlFor="TollVehicleNumber" id="TollVehNo" className="form-label">VehicleNumber</label>
-            <input type="text" className="form-control " onChange={handleVNOChange} id="TollVehicleNumber" placeholder="MP10QR4354" required />
+          <div className="col-sm-7">
+            <label htmlFor="TollVehicleNumber" id="TollVehNo" style={{color:'white'}}className="form-label">VehicleNumber</label>
+            <input type="text" className="form-control " onChange={handleVNOChange} id="TollVehicleNumber" required style={{ textTransform: 'uppercase', borderColor: 'black' }} />
           </div>
-          <div className="col-sm-8">
-            <label htmlFor="TollUserMobileNo" id="TollUserNo" className="form-label">User Mobile Number</label>
-            <input type="number" className="form-control " onChange={handleMNOChange} id="TollUserMobileNo" placeholder="xxxxxxxxxx" required />
+          <div className="col-sm-7 mt-2">
+            <label htmlFor="TollUserMobileNo" id="TollUserNo" style={{color:'white'}}className="form-label">User Mobile Number</label>
+            <input type="number" className="form-control " style={{borderColor: 'black'
+            }} onChange={handleMNOChange} inputMode="numeric" id="TollUserMobileNo" required />
           </div>
-          <br />
-          <div className="image col-9 mt-2 mb-2">   
-            <label htmlFor="TollTireImage" id="TollUploadTire" className="form-label">Upload Tyre :</label>
-            <input type="file" accept='image/*' name="tyre" onChange={handleImageChange} required id="TollTireImage" className='form-control' />
+          <div className="image col-sm-7 mt-2 mb-2">
+            <label htmlFor="TollTireImage" id="TollUploadTire" style={{color:'white'}}className="form-label">Upload Tire(s) :</label>
+            <input type="file" accept='image/*' name="tyre" onChange={handleImageChange} style={{ borderColor: 'black' }} required id="TollTireImage" maxLength={8} className='form-control' multiple />
           </div>
-
-          {uploadStatus && (
-        <div id='TollUploadResult'>
-          <p>Upload Status : {uploadStatus}</p>
-        </div>
-        )}
-          <div className="col-12 mt-2 mb-2">
-            <button type="submit" id="TollSubmit" className="btn btn-dark">Submit</button>
-          </div>
-
+          {loader && <Loader />}
           
-        </form>           
-
-        <div>
-          <Link to="/"><button type='' id='TollBack' className="btn btn-dark">Go Back To Home</button></Link>
-        </div>
-      
-    </div>
+          <div className="col-12 mt-2 mb-2">
+            <button type="submit" id="TollSubmit" className="btn btn-primary">Submit</button>
+          </div>
+          <div className="col-12 mt-2">
+            <Link to="/toll/start" type='button' id='TollBack' className="btn btn-warning">Go Back</Link>
+          </div>
+          {uploadStatus && (
+            <div className="col-12 mt-2 mb-2">
+            {uploadStatus === 'Uploaded Successfully'? <button type="button" className="btn btn-success">{uploadStatus}</button> : <button type="button" className="btn btn-danger">{uploadStatus}</button>}
+          </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 
