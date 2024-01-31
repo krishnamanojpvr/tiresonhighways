@@ -10,8 +10,18 @@ export default function TollUpload(props) {
   const [vehicleNumber, setVehicleNumber] = useState(null);
   const [userMobileNumber, setUserMobileNo] = useState(null);
   const [loader, setLoader] = useState(false); // Loader
+  const [display , setDisplay] = useState(false); // Display
   const [uploadStatus, setUploadStatus] = useState(false); // Result
   const navigate = useNavigate();
+
+  function validateVehicleNumber(vehicleNumber) {
+    const vehicleRegex = /^([A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4})$/;
+    return vehicleRegex.test(vehicleNumber);
+  }
+  function validatePhoneNumber(userMobileNumber) {
+    const phoneRegex = /^([0-9]{10})$/;
+    return phoneRegex.test(userMobileNumber);
+  }
 
   useEffect(() => {
     if (uploadStatus) {
@@ -33,15 +43,17 @@ export default function TollUpload(props) {
   const dateS = (date.getFullYear() + '-' + m + '-' + String(d));
 
   const handleVNOChange = (event) => {
+
     setLoader(false);
     setUploadStatus(null);
+    setDisplay(null);
     setVehicleNumber(event.target.value.toUpperCase());
-
-
+    
   }
 
   const handleMNOChange = (event) => {
     setLoader(false);
+    setDisplay(null);
     setUploadStatus(null);
     setUserMobileNo(event.target.value);
   }
@@ -59,14 +71,38 @@ export default function TollUpload(props) {
   }
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setUploadStatus(null);
     setLoader(true);
+    setDisplay(null);
+
+    const validateVNO = validateVehicleNumber(vehicleNumber);
+    const validateMNO = validatePhoneNumber(userMobileNumber);
+    if (!validateVNO && !validateMNO ) {
+      setVehicleNumber(null);
+      setUserMobileNo(null);
+      setDisplay("Invalid Vehicle Number and Mobile Number");
+      setLoader(false);
+      return;
+    }
+    else if (!validateVNO  ) {
+      setVehicleNumber(null);
+      setDisplay("Invalid Vehicle Number");
+      setLoader(false);
+      return;
+    }
+    else if (!validateMNO ) {
+      setUserMobileNo(null);
+      setDisplay("Invalid Mobile Number");
+      setLoader(false);
+      return;
+    }
     if (img.length > 0) {
 
       const requestData = new FormData();
       for (let i = 0; i < img.length; i++) {
         const tui = `TollUploadImage${i}`
-        requestData.append(tui, img[i]);
+        requestData.append(tui, img[i]);  
       }
 
       requestData.append('vehicleNumber', vehicleNumber);
@@ -76,15 +112,16 @@ export default function TollUpload(props) {
 
       async function call_express(requestData) {
         try {
-          const response_express = await axios.post('https://tohexpress.onrender.com/tollupload', requestData, {
+          await axios.post('http://localhost:4000/tollupload', requestData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
             withCredentials: true,
           });
 
-          console.log(response_express);
+          // console.log(response_express);
           setLoader(false);
+          setDisplay(null);
           setUploadStatus("Uploaded Successfully");
           document.getElementById('TollUploadForm').reset();
 
@@ -100,8 +137,8 @@ export default function TollUpload(props) {
         }
       }
 
-      if (vehicleNumber && userMobileNumber && base64String && img) {
-        call_express(requestData);
+      if (vehicleNumber && userMobileNumber && base64String && img ) {
+        await call_express(requestData);
       }
       else {
         console.log("Error : One or more fields are empty");
@@ -110,6 +147,7 @@ export default function TollUpload(props) {
   }
 
   return (
+    <div className='parenth'>
     <div className=" mt-3  d-flex justify-content-center">
       <div className='TollUpload container' style={{ maxWidth: '600px' }}>
         <form onSubmit={handleSubmit} style={{ maxWidth: '500px', width: '100%'}} className='border border-white border-3 bg-black rounded-4 mt-5 p-4' encType='multipart/form-data' id='TollUploadForm' >
@@ -132,6 +170,7 @@ export default function TollUpload(props) {
           {loader && <Loader />}
           
           <div className="col-12 mt-2 mb-2">
+          {display && <p style={{color:'red'}}>{display}</p>}
             <button type="submit" id="TollSubmit" className="btn btn-primary">Submit</button>
           </div>
           <div className="col-12 mt-2">
@@ -143,6 +182,7 @@ export default function TollUpload(props) {
           </div>
           )}
         </form>
+      </div>
       </div>
     </div>
   );

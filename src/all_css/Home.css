@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 body {
-  
-  background-image: url("t.jpg");
+  background-image: url("black.png");
   /* Escape the backslash */
   /* background: fixed; */
   /* display: flex; */
@@ -15,11 +14,31 @@ body {
   overflow-y: auto;
   /* Add this to hide horizontal overflow */
 }
+.c {
+  --color: #a5a5b0;
+  --size: 20px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  cursor: pointer;
+  font-size: var(--size);
+  user-select: none;
+  fill: var(--color);
+  
+}
+
+.c .eye {
+  position: absolute;
+  right: 5px;
+}
+
+.c .eye-slash {
+  position: absolute;
+  right: 5px;
+}
 
 .parenth {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(10, 1fr);
+  min-height: 100vh;
 }
 
 .Home {

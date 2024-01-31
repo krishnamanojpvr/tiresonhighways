@@ -10,7 +10,7 @@ export default function Navbar({ signInButton, setCookie }) {
   }
   const handleLogOut = async (e) => {
     e.preventDefault()
-    const response = await axios.get(`https://tohexpress.onrender.com/logout`, { withCredentials: true })
+    const response = await axios.get(`http://${window.location.hostname}:4000/logout`, { withCredentials: true })
     if (response.data) {
       setCookie(null)
       setModal(false);
@@ -19,7 +19,7 @@ export default function Navbar({ signInButton, setCookie }) {
 
   }
   return (
-    <nav className="container navbar navbar-expand-lg  border border-2 border-white rounded-5 w-75 mt-3 border-body fixed-top " style={{ background: 'black' }} data-bs-theme="dark">
+    <nav className="container navbar navbar-expand-lg  border border-3 border-white rounded-5 w-75 mt-2 border-body" style={{ background: 'black' }} data-bs-theme="dark">
       <div className="container-fluid">
         <Link to="/" type='button' className="btn btn-light btn-outline-dark rounded-5 me-2" >HOME</Link>
         <button className="navbar-toggler rounded-5 border border-2 border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

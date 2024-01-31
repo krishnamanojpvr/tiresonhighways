@@ -8,7 +8,7 @@ import Guest from './Components/Guest'
 import GuestUpload from './Components/GuestUpload';
 import GuestDetails from './Components/GuestDetails';
 import Navbar from './Components/Navbar';
-// import Footer from './Components/Footer';
+import Footer from './Components/Footer';
 import AboutUs from './Components/AboutUs';
 import TollLogin from "./Components/TollSignIn";
 import Statistics from './Components/Statistics';
@@ -79,7 +79,7 @@ function App() {
           <Route path='/guest/checkdetails' element={<GuestDetails setSignInButton={setSignInButton} />} />
           <Route path='*' element={<NotFound setSignInButton={setSignInButton}  />} />
         </Routes>
-        {/* <Footer setSignInButton={setSignInButton}/> */}
+        <Footer setSignInButton={setSignInButton}/>
       </Router>
     </>
   );

@@ -61,7 +61,7 @@ export default function GuestUpload(props) {
 
             async function makeReq(formData) {
                 try {
-                    const response = await axios.post(`https://tohexpress.onrender.com/guestUp`, formData)
+                    const response = await axios.post(`http://${window.location.hostname}:4000/guestUp`, formData)
                     console.log(response.data);
                     setLoader(false);
                     setRes(true);
@@ -83,69 +83,71 @@ export default function GuestUpload(props) {
 
 
     return (
-
-        <div className="container d-flex justify-content-cenetr  mt-5 " style={{ maxWidth: "600px" }}>
-            <div className="GuestUpload container  rounded-4 p-3 bg-black border border-white border-3" >
-                <form onSubmit={handleUpload} id='form' >
-                    <div className="row text-center mb-3">
-                        <h1 style={{ color: 'white' }}>Upload Tire</h1>
-                    </div>
-                    <div className="image row">
-                        <div className="col">
-                            <input style={{ borderColor: 'black' }} onChange={handleFileChange} type="file" multiple accept="image/*" name="tyre" className="image form-control " required />
+        <div className='parenth'>
+            <div className="container d-flex justify-content-cenetr  mt-5 " style={{ maxWidth: "600px" }}>
+                <div className="GuestUpload container  rounded-4 p-3 bg-black border border-white border-3" >
+                    <form onSubmit={handleUpload} id='form' >
+                        <div className="row text-center mb-3">
+                            <h1 style={{ color: 'white' }}>Upload Tire</h1>
                         </div>
-                        <div className="row">
-                            <div className="col mt-2 ">
-                                <Link to="/guest"
-                                    className="btn btn-warning" >Go Back
-                                </Link>
+                        <div className="image row">
+                            <div className="col">
+                                <input style={{ borderColor: 'black' }} onChange={handleFileChange} type="file" multiple accept="image/*" name="tyre" className="image form-control " required />
                             </div>
-                            {res && !loader && <div className="col mt-2">
-                                <button className="btn btn-success mb-2 ms-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Result</button>
-                            </div>}
-                            <div className="col-sm-2">
-                                <button type='submit' className="btn btn-primary mt-2 mb-2 ">Submit</button>
-                            </div>
-                        </div>
-                        <div className="row mb-2">
-                            {loader && <Loader />}
-                        </div>
-                        <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" >
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Result</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        {res && classificationResult.map((item, index) => (
-                                            <div className='row text-center mb-4 mt-3'>
-                                                <p >Classification : {item.class} </p>
-                                                <p >Confidence : {item.confidence} </p>
-                                                
-                                                <div id="getImg" >
-                                                    <img className="enlarge" style={{ width: '200px', height: 'auto', borderRadius: '10px', transition: 'width 0.3s ease' }} // Shrink on mouse out
-
-                                                        src={base64String[index]} alt="Vehicle Tire" />
+                            <div className="row">
+                                <div className="col mt-2 ">
+                                    <Link to="/guest"
+                                        className="btn btn-warning" >Go Back
+                                    </Link>
+                                </div>
+                                {res && !loader && <div className="col mt-2">
+                                    <button className="btn btn-success mb-2 ms-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Result</button>
+                                    <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" >
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Result</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
+                                                <div class="modal-body">
+                                                     {classificationResult.map((item, index) => (
+                                                        <div className='row text-center mb-4 mt-3'>
+                                                            <p >Classification : {item.class} </p>
+                                                            <p >Confidence : {item.confidence} </p>
+
+                                                            <div id="getImg" >
+                                                                <img className="enlarge" style={{ width: '200px', height: 'auto', borderRadius: '10px', transition: 'width 0.3s ease' }} // Shrink on mouse out
+
+                                                                    src={base64String[index]} alt="Vehicle Tire" />
+                                                            </div>
 
 
-                                            </div>))}
-                                            <hr />
-                                                <br />
+                                                        </div>))}
+                                                    <hr />
+                                                    <br />
 
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-                                    </div>
+                                </div>}
+                                <div className="col-sm-2">
+                                    <button type='submit' className="btn btn-primary mt-2 mb-2 ">Submit</button>
                                 </div>
                             </div>
+                            <div className="row mb-2">
+                                {loader && !res && <Loader />}
+                            </div>
+
                         </div>
-                    </div>
 
 
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );

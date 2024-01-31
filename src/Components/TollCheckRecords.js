@@ -13,6 +13,7 @@ export default function CheckRecords(props) {
   const [loader, setLoader] = useState(false);
   const [resp, setResp] = useState([]);
   const navigate = useNavigate();
+  const [thead , setThead] = useState(false)
   const date = new Date();
   let m = date.getMonth() + 1;
   let d = date.getDate();
@@ -23,12 +24,12 @@ export default function CheckRecords(props) {
   const dateS = date.getFullYear() + '-' + m + '-' + String(d);
 
   async function checkDate(e) {
+    setThead(false)
     setRecords(null)
     setLoader(true);
     e.preventDefault();
-    console.log(props.selectedToll)
     try {
-      const response = await axios.get(`https://tohexpress.onrender.com/checkRecords`, {
+      const response = await axios.get(`http://${window.location.hostname}:4000/checkRecords`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,
@@ -37,9 +38,8 @@ export default function CheckRecords(props) {
       });
       setResp(response.data);
       setLoader(false);
-
+      response.data.length===0?setThead(false):setThead(true);
       setRecords(`${response.data.length}`);
-      console.log(records);
     } catch (err) {
       console.log(err);
     }
@@ -56,7 +56,7 @@ export default function CheckRecords(props) {
 
   async function getImage(vehicleNumber) {
     try {
-      const imageSrcData = await axios.get(`https://tohexpress.onrender.com/getIm`, {
+      const imageSrcData = await axios.get(`http://${window.location.hostname}:4000/getIm`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,
@@ -83,10 +83,10 @@ export default function CheckRecords(props) {
   }
 
   return (
-    <div>
+    <div className='parenth'>
       <div className='container text-center'>
-      <h1 style={{color:'white',backdropFilter:'blur(8px)'}} className='mt-5' >Toll Check Records : {props.selectedToll}</h1>
-        <form onSubmit={checkDate} style={{backdropFilter:'blur(10px)'}} className='container mb-4 bg-black border border-white border-3 rounded-3 p-2   justify-content-center' >
+      <h1 style={{color:'white',backdropFilter:'blur(8px)'}} className='mt-5 bg-black border border-white border-3 rounded-5 p-4' >Toll Check Records : {props.selectedToll}</h1>
+        <form onSubmit={checkDate} style={{backdropFilter:'blur(10px)'}} className='container mb-4 bg-black border border-white border-3 rounded-5 p-2   justify-content-center' >
           <label htmlFor='date'className="mt-1 mb-2 container  align-items-center"style={{color:'white',}}>Enter date :</label>
           <input type='date' name='date' className='me-3 ms-3 rounded-3 border border-3 border-white' onChange={handleDateChange} max={dateS} required></input>
           {!loader && <input type='submit' className='btn btn-primary me-1' value='Check' />}
@@ -103,16 +103,16 @@ export default function CheckRecords(props) {
 
       <div className=' table-responsive'>
         {
-          resp &&
+          thead &&
           <table className="table table-light table-bordered border border-black border-5 container text-center">
-            <thead>
-              <tr>
+            <thead  >
+              <tr >
                 <th scope="col">Vehicle Number</th>
                 <th scope="col">Mobile Number</th>
                 <th scope="col" style={{ width: 'auto' }}>Image</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody >
               {resp.map((item, index) => (
                 <tr key={index}>
                   <td>{item.vehicleNumber}</td>
