@@ -22,6 +22,7 @@ const Tollupload = multer({ storage: TollUp, limits: { fieldSize: 25 * 1024 * 10
 
 //! TollUpload Route
 router.post('/tollupload',auth,Tollupload.any(), async (req, res) => {
+    let msg = '';
     console.log("TollUpload Route");
     const { vehicleNumber, userMobileNumber, date, tollPlaza } = req.body;
     const tollBlobArray = [];
@@ -59,7 +60,6 @@ router.post('/tollupload',auth,Tollupload.any(), async (req, res) => {
                 tyreStatus: tollFlaskResponse,
                 tollPlaza: tollPlaza,
             });
-            let msg = '';
             for(let i=0;i<tollFlaskResponse.length;i++){
                 msg = msg + `Tire${i+1} is ${tollFlaskResponse[i].class}\n`;
             }
