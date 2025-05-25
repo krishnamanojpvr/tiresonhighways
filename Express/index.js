@@ -16,13 +16,16 @@ const app = express();
 const port = 4000;
 
 // ^ CORS 
+// app.use(cors({
+//   // origin: 'https://tiresonhighways.vercel.app',
+//   // credentials: true,
+// }));
 app.use(cors({
-  origin: 'https://tiresonhighways.vercel.app',
+  origin: 'http://localhost:3000',
   credentials: true,
 }));
-
 // & MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect("mongodb://localhost:27017/tiresonhighways")
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 

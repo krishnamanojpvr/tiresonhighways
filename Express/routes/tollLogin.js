@@ -8,11 +8,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 
-// ^ CORS 
-router.use(cors({
-    origin: 'https://tiresonhighways.vercel.app',
-    credentials: true,
-  }));
 
 router.use(cookieParser());
 
@@ -38,9 +33,9 @@ router.post('/login', Tollupload.any(), async (req, res) => {
             try {
               const token = createToken(user._id);
               // console.log(token);
-              res.cookie('tollLogin', token, { domain: 'https://tiresonhighways.vercel.app', maxAge: 60 * 60 * 1000 ,path: '/', sameSite: 'None', secure: true});
+              res.cookie('tollLogin', token, { domain: `${req.hostname}`, sameSite: 'None', path: '/', maxAge: 60 * 60 * 1000 });
               // sameSite: 'None'  -> for CORS purposes and controlling the cookie to be sent only to the same origin
-              // httpOnly : true -> is not recommended for development purposes as we can't access a cookie using document.cookie in the client side 
+              // secure : true -> is not recommended for development purposes as we can't access a cookie using document.cookie in the client side 
               // path: '/' -> to make the cookie available to all the routes
               // domain: `http://${req.hostname}:3000`} -> to make the cookie available to all the subdomains
               console.log("Success");

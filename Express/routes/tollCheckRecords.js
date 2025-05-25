@@ -4,10 +4,7 @@ const TollData = require('../models/TollDataSch');
 const auth = require('../middleware/tollAuth');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-router.use(cors({
-    origin: 'https://tiresonhighways.vercel.app',
-    credentials: true,
-}));
+
 router.use(cookieParser());
 // ! CheckRecords Route
 router.get('/checkRecords', auth, async (req, res) => {

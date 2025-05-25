@@ -29,7 +29,7 @@ export default function CheckRecords(props) {
     setLoader(true);
     e.preventDefault();
     try {
-      const response = await axios.get(`https://tohexpress.onrender.com/checkRecords`, {
+      const response = await axios.get(`http://localhost:4000/checkRecords`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,
@@ -56,7 +56,7 @@ export default function CheckRecords(props) {
 
   async function getImage(vehicleNumber) {
     try {
-      const imageSrcData = await axios.get(`https://tohexpress.onrender.com/getIm`, {
+      const imageSrcData = await axios.get(`http://localhost:4000/getIm`, {
         params: {
           date: dateSub,
           tollPlaza: props.selectedToll,

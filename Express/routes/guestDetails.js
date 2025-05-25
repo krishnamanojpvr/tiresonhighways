@@ -2,10 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const TollData = require('../models/TollDataSch');
-router.use(cors({
-    origin: 'https://tiresonhighways.vercel.app',
-    credentials: true,
-}));
+
 
 // ! GuestDetails Route
 router.get('/guestDet', async (req, res) => {

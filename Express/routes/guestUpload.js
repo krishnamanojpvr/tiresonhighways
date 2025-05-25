@@ -4,10 +4,7 @@ const multer = require('multer');
 const blobUtil = require('blob-util');
 const axios = require('axios');
 const cors = require('cors');
-router.use(cors({
-    origin: 'https://tiresonhighways.vercel.app',
-    credentials: true,
-}));
+
 
 // & Multer config for GuestUpload
 const GuestUp = multer.memoryStorage();
@@ -31,7 +28,7 @@ router.post('/guestUp', Guestupload.any(), async (req, res) => {
       });
       try {
         const guestFlaskResponse = [];
-        const guestResponse_flask = await axios.post("https://tohflask.onrender.com/classify", guestFlaskRequestData);
+        const guestResponse_flask = await axios.post("http://localhost:5000/classify", guestFlaskRequestData);
         for (let i = 0; i < files.length; i++) {
           guestFlaskResponse.push(guestResponse_flask.data[i]);
         }
